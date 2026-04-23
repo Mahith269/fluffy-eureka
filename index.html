@@ -2,94 +2,450 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Simple Weather App</title>
+  <title>Weather App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #4facfe, #00f2fe);
-      color: white;
-      text-align: center;
-      padding: 50px;
-    }
-
-    .container {
-      background: rgba(0,0,0,0.2);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+      color: #ffffff;
+      min-height: 100vh;
       padding: 20px;
-      border-radius: 10px;
-      display: inline-block;
-      width: 300px;
     }
 
-    input {
-      padding: 10px;
-      width: 70%;
-      border: none;
-      border-radius: 5px;
+    .main-container {
+      display: flex;
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
     }
 
-    button {
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      background: #fff;
-      color: #333;
+    .sidebar {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 15px;
+      padding: 20px;
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .sidebar-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
       cursor: pointer;
+      padding: 15px;
+      border-radius: 10px;
+      transition: background 0.3s;
     }
 
-    button:hover {
-      background: #ddd;
+    .sidebar-item:hover {
+      background: rgba(59, 130, 246, 0.2);
     }
 
-    .weather {
+    .sidebar-icon {
+      font-size: 2em;
+    }
+
+    .sidebar-label {
+      font-size: 0.9em;
+      text-align: center;
+    }
+
+    .content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .weather-card {
+      background: rgba(30, 41, 59, 0.9);
+      border-radius: 15px;
+      padding: 30px;
+      grid-column: 1;
+    }
+
+    .search-box {
+      width: 100%;
+      padding: 12px 15px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(71, 85, 105, 0.5);
+      color: white;
+      margin-bottom: 20px;
+      font-size: 1em;
+    }
+
+    .search-box::placeholder {
+      color: #94a3b8;
+    }
+
+    .city-name {
+      font-size: 2.5em;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .rain-chance {
+      color: #94a3b8;
+      font-size: 0.9em;
+      margin-bottom: 20px;
+    }
+
+    .weather-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    .temperature-large {
+      font-size: 4em;
+      font-weight: bold;
+    }
+
+    .sun-icon {
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at 30% 30%, #fbbf24, #f59e0b);
+      border-radius: 50%;
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.5);
+    }
+
+    .forecast-section {
+      margin-top: 30px;
+    }
+
+    .forecast-title {
+      font-size: 0.9em;
+      color: #94a3b8;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .forecast-items {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .forecast-item {
+      background: rgba(71, 85, 105, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      flex: 1;
+    }
+
+    .forecast-time {
+      font-size: 0.9em;
+      color: #94a3b8;
+      margin-bottom: 8px;
+    }
+
+    .forecast-icon {
+      font-size: 2em;
+      margin: 10px 0;
+    }
+
+    .forecast-temp {
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+
+    .air-conditions {
+      background: rgba(71, 85, 105, 0.3);
+      border-radius: 10px;
+      padding: 20px;
       margin-top: 20px;
     }
 
-    .temp {
-      font-size: 2em;
+    .air-conditions-title {
+      font-size: 0.9em;
+      color: #94a3b8;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .see-more-btn {
+      background: #3b82f6;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85em;
+    }
+
+    .conditions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .condition-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .condition-icon {
+      font-size: 1.5em;
+    }
+
+    .condition-value {
+      font-size: 1.5em;
+      font-weight: bold;
+    }
+
+    .condition-label {
+      color: #94a3b8;
+      font-size: 0.85em;
+    }
+
+    .forecast-card {
+      background: rgba(30, 41, 59, 0.9);
+      border-radius: 15px;
+      padding: 20px;
+      grid-column: 2;
+    }
+
+    .forecast-card-title {
+      font-size: 1em;
+      color: #94a3b8;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .forecast-day {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+    }
+
+    .forecast-day:last-child {
+      border-bottom: none;
+    }
+
+    .day-name {
+      color: #94a3b8;
+      min-width: 50px;
+    }
+
+    .day-weather {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .day-weather-icon {
+      font-size: 1.5em;
+    }
+
+    .day-weather-name {
+      color: #e2e8f0;
+      font-size: 0.95em;
+    }
+
+    .day-temp {
+      color: #94a3b8;
+      font-size: 0.9em;
     }
   </style>
 </head>
 <body>
+  <div class="main-container">
+    <div class="sidebar">
+      <div class="sidebar-item">
+        <div class="sidebar-icon">🌤️</div>
+        <div class="sidebar-label">Weather</div>
+      </div>
+      <div class="sidebar-item">
+        <div class="sidebar-icon">📋</div>
+        <div class="sidebar-label">Cities</div>
+      </div>
+      <div class="sidebar-item">
+        <div class="sidebar-icon">🗺️</div>
+        <div class="sidebar-label">Map</div>
+      </div>
+      <div class="sidebar-item">
+        <div class="sidebar-icon">⚙️</div>
+        <div class="sidebar-label">Settings</div>
+      </div>
+    </div>
 
-  <div class="container">
-    <h2>🌤 Weather App</h2>
-    <input type="text" id="city" placeholder="Enter city name">
-    <button onclick="getWeather()">Search</button>
+    <div class="content">
+      <div class="weather-card">
+        <input type="text" class="search-box" id="city" placeholder="Search for cities">
+        
+        <div class="city-name" id="cityName">Madrid</div>
+        <div class="rain-chance">Chance of rain: 0%</div>
 
-    <div class="weather" id="weatherResult"></div>
+        <div class="weather-main">
+          <div class="temperature-large" id="temp">31°</div>
+          <div class="sun-icon"></div>
+        </div>
+
+        <div class="forecast-section">
+          <div class="forecast-title">TODAY'S FORECAST</div>
+          <div class="forecast-items">
+            <div class="forecast-item">
+              <div class="forecast-time">6:00 AM</div>
+              <div class="forecast-icon">☁️</div>
+              <div class="forecast-temp">25°</div>
+            </div>
+            <div class="forecast-item">
+              <div class="forecast-time">9:00 AM</div>
+              <div class="forecast-icon">⛅</div>
+              <div class="forecast-temp">28°</div>
+            </div>
+            <div class="forecast-item">
+              <div class="forecast-time">12:00 PM</div>
+              <div class="forecast-icon">☀️</div>
+              <div class="forecast-temp">33°</div>
+            </div>
+            <div class="forecast-item">
+              <div class="forecast-time">3:00 PM</div>
+              <div class="forecast-icon">☀️</div>
+              <div class="forecast-temp">34°</div>
+            </div>
+            <div class="forecast-item">
+              <div class="forecast-time">6:00 PM</div>
+              <div class="forecast-icon">☀️</div>
+              <div class="forecast-temp">32°</div>
+            </div>
+            <div class="forecast-item">
+              <div class="forecast-time">9:00 PM</div>
+              <div class="forecast-icon">☁️</div>
+              <div class="forecast-temp">30°</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="air-conditions">
+          <div class="air-conditions-title">
+            <span>AIR CONDITIONS</span>
+            <button class="see-more-btn">See more</button>
+          </div>
+          <div class="conditions-grid">
+            <div class="condition-item">
+              <div class="condition-icon">🌡️</div>
+              <div>
+                <div class="condition-label">Real Feel</div>
+                <div class="condition-value">30°</div>
+              </div>
+            </div>
+            <div class="condition-item">
+              <div class="condition-icon">💨</div>
+              <div>
+                <div class="condition-label">Wind</div>
+                <div class="condition-value">0.2 km/h</div>
+              </div>
+            </div>
+            <div class="condition-item">
+              <div class="condition-icon">💧</div>
+              <div>
+                <div class="condition-label">Chance of rain</div>
+                <div class="condition-value">0%</div>
+              </div>
+            </div>
+            <div class="condition-item">
+              <div class="condition-icon">☀️</div>
+              <div>
+                <div class="condition-label">UV Index</div>
+                <div class="condition-value">3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="forecast-card">
+        <div class="forecast-card-title">7-DAY FORECAST</div>
+        <div class="forecast-day">
+          <div class="day-name">Today</div>
+          <div class="day-weather">
+            <div class="day-weather-icon">☀️</div>
+            <div class="day-weather-name">Sunny</div>
+          </div>
+          <div class="day-temp">36/22</div>
+        </div>
+        <div class="forecast-day">
+          <div class="day-name">Tue</div>
+          <div class="day-weather">
+            <div class="day-weather-icon">☀️</div>
+            <div class="day-weather-name">Sunny</div>
+          </div>
+          <div class="day-temp">37/21</div>
+        </div>
+        <div class="forecast-day">
+          <div class="day-name">Wed</div>
+          <div class="day-weather">
+            <div class="day-weather-icon">☀️</div>
+            <div class="day-weather-name">Sunny</div>
+          </div>
+          <div class="day-temp">37/21</div>
+        </div>
+        <div class="forecast-day">
+          <div class="day-name">Thu</div>
+          <div class="day-weather">
+            <div class="day-weather-icon">☁️</div>
+            <div class="day-weather-name">Cloudy</div>
+          </div>
+          <div class="day-temp">37/21</div>
+        </div>
+        <div class="forecast-day">
+          <div class="day-name">Fri</div>
+          <div class="day-weather">
+            <div class="day-weather-icon">☁️</div>
+            <div class="day-weather-name">Cloudy</div>
+          </div>
+          <div class="day-temp">37/21</div>
+        </div>
+        <div class="forecast-day">
+          <div class="day-name">Sat</div>
+          <div class="day-weather">
+            <div class="day-weather-icon">🌧️</div>
+            <div class="day-weather-name">Rainy</div>
+          </div>
+          <div class="day-temp">37/21</div>
+        </div>
+        <div class="forecast-day">
+          <div class="day-name">Sun</div>
+          <div class="day-weather">
+            <div class="day-weather-icon">⚡</div>
+            <div class="day-weather-name">Storm</div>
+          </div>
+          <div class="day-temp">37/21</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    async function getWeather() {
-      const city = document.getElementById('city').value;
-
-      if (!city) {
-        alert("Please enter a city name");
-        return;
+    document.getElementById('city').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        // Mock data - in real app this would fetch API data
+        document.getElementById('cityName').textContent = this.value || 'Madrid';
       }
-
-      // Mock data to simulate API response
-      const mockData = {
-        name: "Madrid",
-        sys: { country: "ES" },
-        main: { temp: 31, humidity: 20 },
-        weather: [{ main: "Sunny" }],
-        wind: { speed: 0.2 }
-      };
-
-      const weatherHTML = `
-        <h3>${mockData.name}, ${mockData.sys.country}</h3>
-        <div class="temp">${mockData.main.temp}°C</div>
-        <p>${mockData.weather[0].main}</p>
-        <p>Humidity: ${mockData.main.humidity}%</p>
-        <p>Wind Speed: ${mockData.wind.speed} m/s</p>
-      `;
-
-      document.getElementById('weatherResult').innerHTML = weatherHTML;
-    }
+    });
   </script>
-
 </body>
 </html>
